@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>validation form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 30px;
+            text-align: center;
+
+        }
+
+        #form-box {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .h2 {
+            color: black;
+        }
+
+        #form {
+            background: white;
+            width: 400px;
+            border-radius: 10px;
+            margin: auto;
+            padding: 25px;
+
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-weight: 500;
+            /* border-radius: 10px; */
+            outline-color: aqua;
+
+        }
+
+        .placeholder {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        button {
+            width: 100%;
+            background-color: black;
+            padding: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: start;
+        }
+
+        .success {
+            color: green;
+            padding-top: 15px;
+            text-align: center;
+        }
+
+        .user {
+            background: white;
+            padding: 10px;
+            /* margin: 15px auto; */
+            width: 300px;
+            border-radius: 8px;
+            text-align: start;
+            box-shadow: 0px 2px 10px black;
+
+        }
+
+        .user img {
+            width: 300px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        #user-main {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .user-no {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-box">
+        <h2>Registration form</h2>
+
+        <form id="form">
+            <input type="url" id="image" placeholder="img Url">
+            <p class="error" id="imageError"></p>
+
+            <input type="text" id="name" placeholder="Enter Name">
+            <p class="error" id="nameError"></p>
+
+            <input type="email" id="email" placeholder="Enter Email">
+            <p class="error" id="emailError"></p>
+
+            <input type="password" id="password" placeholder="Enter Password">
+            <p class="error" id="passwordError"></p>
+
+            <input type="password" id="confirmPassword" placeholder="confirm Password">
+            <p class="error" id="confirmError"></p>
+
+            <input type="number" id="age" placeholder="Enter Age">
+            <p class="error" id="ageError"></p>
+
+            <button type="submit">Register</button>
+
+            <p class="success" id="success"></p>
+
+        </form>
+    </div>
+
+    <div id="users"></div>
+
+    <script>
+        //get form;
+        let form = document.querySelector("#form");
+        //get inputs;
+        let imgInput = document.querySelector("#image")
+        let nameInput = document.querySelector("#name");
+        let emailInput = document.querySelector("#email");
+        let passwordInput = document.querySelector("#password");
+        let confirmPasswordInput = document.querySelector("#confirmPassword");
+        let ageInput = document.querySelector("#age");
+        // get error inputs;
+        let imgError = document.querySelector("#imageError")
+        let nameError = document.querySelector("#nameError");
+        let emailError = document.querySelector("#emailError");
+        let passwordError = document.querySelector("#passwordError");
+        let confirmError = document.querySelector("#confirmError");
+        let ageError = document.querySelector("#ageError");
+        let success = document.querySelector("#success");
+        // get user form from localstorage;
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        // form submit;
+        form.addEventListener("submit", function (event) {
+            //reload stop;
+            event.preventDefault();
+            //get value; 
+            let image = imgInput.value.trim();
+            let name = nameInput.value.trim();
+            let email = emailInput.value.trim();
+            let password = passwordInput.value;
+            let confirmPassword = confirmPasswordInput.value;
+            let age = Number(ageInput.value);
+            //clear old error;
+            imageError.textContent = "";
+            nameError.textContent = "";
+            emailError.textContent = "";
+            passwordError.textContent = "";
+            confirmError.textContent = "";
+            ageError.textContent = "";
+            success.textContent = "";
+
+            // validation;
+            let isValid = true;
+            //image validation;
+            if (image === "") {
+                imgError.textContent = "Image URL is Required";
+                isValid = false;
+            } else {
+                try {
+                    new URL(image);
+                } catch (error) {
+                    imageError.textContent = "Enter a valid Url Image"
+                }
+
+            }
+            //name validation;
+            if (name === "") {
+                nameError.textContent = "Name is Required";
+                isValid = false;
+            } else if (name.length < 3) {
+                nameError.textContent = "name must be at least 3 characters";
+                isValid = false;
+
+            }
+            // email validation;
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email === "") {
+                emailError.textContent = "Email is Required";
+                isValid = false;
+            } else if (!emailPattern.test(email)) {
+                emailError.textContent = "Enter a valid Email";
+                isValid = false;
+            }
+            //password validation;
+            if (password === "") {
+                passwordError.textContent = "Password is Required";
+                isValid = false;
+            } else if (password.length < 6) {
+                passwordError.textContent = "Password must be at least 6 characters";
+                isValid = false;
+            }
+            // confirm password;
+            if (confirmPassword === "") {
+                confirmError.textContent = "Confirm your password";
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                confirmError.textContent = "Password do not match";
+                isValid = false;
+            }
+            //age validation;
+            if (ageInput === "") {
+                ageError.textContent = "Age is required";
+                isValid = false;
+            } else if (age < 18 || age > 60) {
+                ageError.textContent = "age must be between 18 and 60";
+                isValid = false;
+            }
+            // if everything is validl;
+            if (isValid) {
+                //create user objects;
+                let user = {
+                    image: image,
+                    name: name,
+                    email: email,
+                    password: password,
+                    age: age,
+                };
+                //add user to array;
+                users.push(user);
+                //save  array in localstorage;
+                localStorage.setItem("users", JSON.stringify(users));
+                //success message;
+                success.textContent = "Registration successful!";
+                //reset form;
+                form.reset();
+                //show users;
+                showUsers();
+
+                // localStorage.removeItem("users");
+            }
+        });
+        //display save users;
+        function showUsers() {
+            let usersContainer = document.querySelector("#users");
+            usersContainer.innerHTML = "";
+
+            for (let i = 0; i < users.length; i++) {
+                usersContainer.innerHTML += `
+                   <div id="user-main">
+                        <div class="user">
+                            <h3 class="user-no">User ${i + 1}</h3>
+                            <img 
+                                src="${users[i].image}"
+                                width="100"
+                                height="100"
+                                style="object-fit: cover;"
+                            >
+                            <p>
+                                <strong>Name:</strong>
+                                ${users[i].name}
+                            </p>
+                            <p>
+                                <strong>Email:</strong>
+                                ${users[i].email}
+                            </p>
+                            <p>
+                                <strong>Age:</strong>
+                                ${users[i].age}
+                            </p>
+                            <button onclick="deleteUser(${i})">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+
+                
+                `;
+            }
+        }
+        //show save users when page reload;
+        showUsers();
+        //delete;
+        function deleteUser(index) {
+
+            // array se user delete
+            users.splice(index, 1);
+
+            // updated array localStorage mein save
+            localStorage.setItem("users", JSON.stringify(users));
+
+            // cards dobara display
+            showUsers();
+        }
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
