@@ -200,7 +200,6 @@
                 } catch (error) {
                     imageError.textContent = "Enter a valid Url Image"
                 }
-
             }
             //name validation;
             if (name === "") {
@@ -265,6 +264,9 @@
                 //show users;
                 showUsers();
 
+                //save users;
+                saveusers();
+
                 // localStorage.removeItem("users");
             }
         });
@@ -301,8 +303,6 @@
                             </button>
                         </div>
                     </div>
-
-                
                 `;
             }
         }
@@ -320,12 +320,6 @@
             // cards dobara display
             showUsers();
         };
-
-
-
-
-
-
     </script>
 
 </body>
